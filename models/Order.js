@@ -65,6 +65,30 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
+    Order.hasMany(db.OrderChat, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+    Order.hasMany(db.Transaction, {
+      foreignKey: {
+        name: "orderId",
+        allowNull: true,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+    Order.hasMany(db.pinLocation, {
+      foreignKey: {
+        name: "pinId",
+        allowNull: true,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
   };
   return Order;
 };

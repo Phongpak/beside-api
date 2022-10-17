@@ -43,6 +43,14 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
+    Transaction.belongsTo(db.Order, {
+      foreignKey: {
+        name: "orderId",
+        allowNull: true,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
   };
   return Transaction;
 };

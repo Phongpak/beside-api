@@ -21,5 +21,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     { underscord: true }
   );
+  PinLocation.associate = (db) => {
+    PinLocation.belongsTo(db.User, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+    PinLocation.hasMany(db.Order, {
+      foreignKey: {
+        name: "pinId",
+        allowNull: false,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+  };
   return PinLocation;
 };
