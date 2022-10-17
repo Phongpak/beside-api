@@ -1,0 +1,13 @@
+exports.STATUS_NULL = null;
+exports.STATUS_PENDING = "PENDING";
+exports.STATUS_INPROGRESS = "INPROGRESS";
+exports.STATUS_SUCCESS = "SUCCESS";
+exports.STATUS_REJECT = "REJECT";
+
+exports.TASK_TOPUP = "TOPUP";
+exports.TASK_ORDER = "ORDER";
+exports.TASK_WITHDRAW = "WITHDRAW";
+
+exports.SEX_MALE = "MALE";
+exports.SEX_FEMALE = "FEMALE";
+exports.SEX_NOTSPECIFIC = "NOT_SPECIFIC";

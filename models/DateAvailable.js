@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "DateAvailable",
     {
       weekday: {
-        type: DataTypes.ENUM(0, 1, 2, 3, 4, 5, 6),
+        type: DataTypes.ENUM("0", "1", "2", "3", "4", "5", "6"),
         allowNull: false,
         validate: { notEmpty: true },
       },

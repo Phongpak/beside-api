@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const profileImages = sequelize.define(
-    "profileImages",
+  const ProfileImages = sequelize.define(
+    "ProfileImages",
     {
       Image: {
         type: DataTypes.STRING,
@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     { underscord: true }
   );
-  profileImages.associate = (db) => {
-    profileImages.belongsTo(db.User, {
+  ProfileImages.associate = (db) => {
+    ProfileImages.belongsTo(db.User, {
       foreignKey: {
         name: "userId",
         allowNull: false,
@@ -20,5 +20,5 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
   };
-  return profileImages;
+  return ProfileImages;
 };

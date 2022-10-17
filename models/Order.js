@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
-    Order.hasMany(db.pinLocation, {
+    Order.hasMany(db.PinLocation, {
       foreignKey: {
         name: "pinId",
         allowNull: true,

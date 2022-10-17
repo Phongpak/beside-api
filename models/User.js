@@ -58,12 +58,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: { notEmpty: true },
       },
       gender: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT SPECIFIC"),
+        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
         allowNull: false,
         validate: { notEmpty: true },
       },
       sexuallyInterested: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT SPECIFIC"),
+        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
         allowNull: false,
         validate: { notEmpty: true },
       },
