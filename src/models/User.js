@@ -1,6 +1,15 @@
+const {
+  SEX_MALE,
+  SEX_FEMALE,
+  SEX_NOTSPECIFIC,
+  STATUS_PENDING,
+  STATUS_SUCCESS,
+  STATUS_REJECT,
+} = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User",
+    'User',
     {
       isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -8,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         validate: { notEmpty: true },
       },
-      username: {
-        type: DataTypes.STRING,
+      isVerify: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        validate: { notEmpty: true },
+        defaultValue: false,
       },
       password: {
         type: DataTypes.STRING,
@@ -30,7 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       penName: {
         type: DataTypes.STRING,
-        allowNull: false,
         validate: { notEmpty: true },
       },
       email: {
@@ -49,8 +57,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       idCardImage: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: { notEmpty: true },
       },
       age: {
         type: DataTypes.INTEGER,
@@ -58,14 +64,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: { notEmpty: true },
       },
       gender: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
+        type: DataTypes.ENUM(SEX_MALE, SEX_FEMALE, SEX_NOTSPECIFIC),
         allowNull: false,
         validate: { notEmpty: true },
       },
       sexuallyInterested: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
-        allowNull: false,
-        validate: { notEmpty: true },
+        type: DataTypes.ENUM(SEX_MALE, SEX_FEMALE, SEX_NOTSPECIFIC),
       },
       bookBankImage: {
         type: DataTypes.STRING,
@@ -100,92 +104,92 @@ module.exports = (sequelize, DataTypes) => {
         validate: { notEmpty: true },
       },
       providerRequestStatus: {
-        type: DataTypes.ENUM("PENDING", "SUCCESS", "REJECT"),
+        type: DataTypes.ENUM(STATUS_PENDING, STATUS_SUCCESS, STATUS_REJECT),
         allowNull: true,
       },
     },
-    { underscord: true }
+    { underscored: true }
   );
   User.associate = (db) => {
     User.hasMany(db.Order, {
       foreignKey: {
-        name: "customerId",
+        name: 'customerId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.Order, {
       foreignKey: {
-        name: "providerId",
+        name: 'providerId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.OrderChat, {
       foreignKey: {
-        name: "userId",
+        name: 'userId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.Transaction, {
       foreignKey: {
-        name: "senderId",
+        name: 'senderId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.Transaction, {
       foreignKey: {
-        name: "receiverId",
+        name: 'receiverId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.PinLocation, {
       foreignKey: {
-        name: "userId",
+        name: 'userId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.ProfileImages, {
       foreignKey: {
-        name: "userId",
+        name: 'userId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasMany(db.SupportChat, {
       foreignKey: {
-        name: "userId",
+        name: 'userId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasOne(db.SupportChat, {
       foreignKey: {
-        name: "userRoom",
+        name: 'userRoom',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
     User.hasOne(db.DateAvailable, {
       foreignKey: {
-        name: "userId",
+        name: 'userId',
         allowNull: false,
       },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
   };
   return User;
