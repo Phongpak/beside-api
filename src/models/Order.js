@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
       appointmentDate: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: 0,
         validate: { notEmpty: true },
       },
       fromTime: {

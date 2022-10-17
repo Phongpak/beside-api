@@ -1,7 +1,7 @@
 //sync or create database tables
 //
 // const { sequelize } = require("./models");
-// sequelize.sync({ alter: true });
+// sequelize.sync({ force: true });
 //
 
 //core imports
@@ -11,11 +11,11 @@ const cors = require("cors"); // for cross-domain-ports requests
 const morgan = require("morgan"); // for dev-using logs
 
 //routes import
-const xxxRoute = require("");
+// const xxxRoute = require("");
 
 //middlewares import
-const notFound = require("../src/middlewares/notFound");
-const error = require("../src/middlewares/error");
+const notFound = require("./middlewares/notFound");
+const error = require("./middlewares/error");
 
 //cores
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //routes
-app.use("/xxx", xxxRoute);
+// app.use("/xxx", xxxRoute);
 
 //middlewares
 app.use(notFound);
