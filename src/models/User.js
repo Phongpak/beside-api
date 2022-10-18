@@ -58,8 +58,8 @@ module.exports = (sequelize, DataTypes) => {
       idCardImage: {
         type: DataTypes.STRING,
       },
-      age: {
-        type: DataTypes.INTEGER,
+      birthDate: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: { notEmpty: true },
       },
