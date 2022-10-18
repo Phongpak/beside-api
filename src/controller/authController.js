@@ -12,8 +12,16 @@ const genToken = (payload) =>
 exports.register = async (req, res, next) => {
   try {
     const user = req.body;
-    const { firstName, lastName, email, mobile, birthDate, gender, password } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      mobile,
+      birthDate,
+      gender,
+      password,
+      nationality,
+    } = req.body;
 
     if (
       !firstName ||
@@ -22,7 +30,8 @@ exports.register = async (req, res, next) => {
       !mobile ||
       !birthDate ||
       !gender ||
-      !password
+      !password ||
+      !nationality
     ) {
       throw new AppError('Input require', 400);
     }
