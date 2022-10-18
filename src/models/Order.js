@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     'Order',
     {
       appointmentDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: { notEmpty: true },
       },
