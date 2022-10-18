@@ -1,7 +1,7 @@
 //sync or create database tables
-
-const { sequelize } = require('./models');
-sequelize.sync({ force: true });
+//
+// const { sequelize } = require("./models");
+// sequelize.sync({ force: true });
 //
 
 //core imports
