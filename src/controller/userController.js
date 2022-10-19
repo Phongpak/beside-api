@@ -64,7 +64,24 @@ exports.updateUser = async (req, res, next) => {
           await ProfileImages.create({ Image: URL, userId: req.user.id });
         }
       }
-      console.log(providerRequestStatus);
+      if (req.files.idCardImage) {
+        const oldIdCardImage = req.user.idCardImage;
+        const imageURL = await cloudinary.upload(
+          req.files.idCardImage[0].path,
+          oldIdCardImage ? cloudinary.getPublicId(oldIdCardImage) : undefined
+        );
+        await User.update({ idCardImage: imageURL }, { where: { id: id } });
+      }
+      if (req.files.bookBankImage) {
+        const oldBookBankImage = req.user.bookBankImage;
+        const imageURL = await cloudinary.upload(
+          req.files.bookBankImage[0].path,
+          oldBookBankImage
+            ? cloudinary.getPublicId(oldBookBankImage)
+            : undefined
+        );
+        await User.update({ bookBankImage: imageURL }, { where: { id: id } });
+      }
 
       if (providerRequestStatus !== undefined) {
         if (providerRequestStatus !== "PENDING") {
@@ -81,10 +98,8 @@ exports.updateUser = async (req, res, next) => {
           lastName,
           penName,
           hobby,
-          idCardImage,
           gender,
           sexuallyInterested,
-          bookBankImage,
           bookAccountNumber,
           bankName,
           description,
@@ -101,9 +116,17 @@ exports.updateUser = async (req, res, next) => {
   } finally {
     if (req.files.profileImages) {
       const multiplePictureUnlinkPromise = req.files.profileImages.map(
-        (profileImage) => fs.unlinkSync(profileImage.path)
+        (profileImage) => {
+          return fs.unlinkSync(profileImage.path);
+        }
       );
       multiplePictureUnlinkPromise;
+    }
+    if (req.files.idCardImage) {
+      fs.unlinkSync(req.files.idCardImage[0].path);
+    }
+    if (req.files.bookBankImage) {
+      fs.unlinkSync(req.files.bookBankImage[0].path);
     }
   }
 };
@@ -118,6 +141,7 @@ exports.deleteProfileImage = async (req, res, next) => {
         401
       );
     }
+    await cloudinary.destroy(cloudinary.getPublicId(image.Image));
     await image.destroy();
     res.status(201).json({ message: "delete success" });
   } catch (err) {
