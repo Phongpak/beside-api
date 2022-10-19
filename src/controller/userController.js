@@ -64,6 +64,7 @@ exports.updateUser = async (req, res, next) => {
           await ProfileImages.create({ Image: URL, userId: req.user.id });
         }
       }
+
       if (req.files.idCardImage) {
         const oldIdCardImage = req.user.idCardImage;
         const imageURL = await cloudinary.upload(
@@ -83,6 +84,7 @@ exports.updateUser = async (req, res, next) => {
         await User.update({ bookBankImage: imageURL }, { where: { id: id } });
       }
 
+
       if (providerRequestStatus !== undefined) {
         if (providerRequestStatus !== "PENDING") {
           throw new AppError(
@@ -100,6 +102,7 @@ exports.updateUser = async (req, res, next) => {
           hobby,
           gender,
           sexuallyInterested,
+
           bookAccountNumber,
           bankName,
           description,
@@ -128,6 +131,7 @@ exports.updateUser = async (req, res, next) => {
     if (req.files.bookBankImage) {
       fs.unlinkSync(req.files.bookBankImage[0].path);
     }
+
   }
 };
 
@@ -141,6 +145,7 @@ exports.deleteProfileImage = async (req, res, next) => {
         401
       );
     }
+
     await cloudinary.destroy(cloudinary.getPublicId(image.Image));
     await image.destroy();
     res.status(201).json({ message: "delete success" });
