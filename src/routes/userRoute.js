@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.patch(
   "/:id",
-  upload.fields([{ name: "profileImages", maxCount: 3 }]),
+  upload.fields([
+    { name: "profileImages", maxCount: 3 },
+    { name: "idCardImage", maxCount: 1 },
+    { name: "bookBankImage", maxCount: 1 },
+  ]),
   userController.updateUser
 );
 
