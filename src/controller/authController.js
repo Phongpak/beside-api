@@ -12,17 +12,46 @@ const genToken = (payload) =>
 exports.register = async (req, res, next) => {
   try {
     const user = req.body;
+
+    const {
+      firstName,
+      lastName,
+      email,
+      mobile,
+      birthDate,
+      gender,
+      password,
+      nationality,
+    } = req.body;
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !mobile ||
+      !birthDate ||
+      !gender ||
+      !password ||
+      !nationality
+    ) {
+      throw new AppError('Input require', 400);
+    }
     const existingUser = await User.findOne({
-      where: { [Op.or]: [{ email: user.email }, { mobile: user.mobile }] },
+      where: {
+        [Op.or]: [
+          { email: user.email },
+          { mobile: user.mobile },
+          { firstName: user.firstName, lastName: user.lastName },
+        ],
+      },
     });
     if (existingUser) {
-      console.log('test', existingUser);
       throw new AppError('User already exited', 400);
     }
 
     const isEmail = validator.isEmail(user.email);
     const isMobile = validator.isMobilePhone(user.mobile, ['th-TH']);
-    console.log(isEmail);
+
     if (!isEmail || !isMobile) {
       throw new AppError('Invalid email or mobile');
     }
@@ -30,7 +59,9 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(user.password, 12);
     user.password = hashedPassword;
 
+
     await User.create(user);
+
     res.status(200).json({ message: 'Register success' });
   } catch (err) {
     next(err);
