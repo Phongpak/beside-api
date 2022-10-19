@@ -12,6 +12,7 @@ const genToken = (payload) =>
 exports.register = async (req, res, next) => {
   try {
     const user = req.body;
+
     const {
       firstName,
       lastName,
@@ -50,6 +51,7 @@ exports.register = async (req, res, next) => {
 
     const isEmail = validator.isEmail(user.email);
     const isMobile = validator.isMobilePhone(user.mobile, ['th-TH']);
+
     if (!isEmail || !isMobile) {
       throw new AppError('Invalid email or mobile');
     }
@@ -57,7 +59,9 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(user.password, 12);
     user.password = hashedPassword;
 
-    // await User.create(user);
+
+    await User.create(user);
+
     res.status(200).json({ message: 'Register success' });
   } catch (err) {
     next(err);
