@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "PENDING",
         validate: { notEmpty: true },
       },
+      slipImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       comment: {
         type: DataTypes.STRING,
         allowNull: true,
