@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 //routes
 app.use("/auth", authRoute);
 app.use("/user", authenticate, userRoute);
-app.use("/transaction", authenticate, transactionRoute);
+app.use("/transaction", transactionRoute);
 app.use("/admin", adminAuthenticate, adminRoute);
 
 //middlewares
