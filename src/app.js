@@ -1,7 +1,7 @@
 //sync or create database tables
 //
 // const { sequelize } = require("./models");
-// sequelize.sync({ force: true });
+// sequelize.sync({ alter: true });
 //
 
 //core imports
@@ -16,7 +16,6 @@ const userRoute = require("./routes/userRoute");
 const adminRoute = require("./routes/adminRoute");
 const transactionRoute = require("./routes/transactionRoute");
 const dateRoute = require("./routes/dateRoute");
-const pinRoute = require("./routes/pinRoute");
 
 //middlewares import
 const notFound = require("./middlewares/notFound");
@@ -37,7 +36,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoute);
 app.use("/user", authenticate, userRoute);
 app.use("/date", authenticate, dateRoute);
-app.use("/pin", authenticate, pinRoute);
 app.use("/transaction", transactionRoute);
 app.use("/admin", adminAuthenticate, adminRoute);
 

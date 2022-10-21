@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const AppError = require("../utils/appError");
+const cloudinary = require("../utils/cloudinary");
 const genToken = (payload) =>
   jwt.sign(payload, process.env.JWT_SECRET_KEY || "private_key", {
     expiresIn: process.env.JWT_EXPIRES || "1d",
@@ -34,8 +35,12 @@ exports.register = async (req, res, next) => {
       !password ||
       !nationality
     ) {
-      throw new AppError('Input require', 400);
+      throw new AppError("Input require", 400);
     }
+    if (!req.files?.idCardImage) {
+      throw new AppError("require idCardImage", 400);
+    }
+
     const existingUser = await User.findOne({
       where: {
         [Op.or]: [
@@ -46,14 +51,11 @@ exports.register = async (req, res, next) => {
       },
     });
     if (existingUser) {
-
-      console.log("test", existingUser);
       throw new AppError("User already existed", 400);
     }
 
     const isEmail = validator.isEmail(user.email);
     const isMobile = validator.isMobilePhone(user.mobile, ["th-TH"]);
-    console.log(isEmail);
 
     if (!isEmail || !isMobile) {
       throw new AppError("Invalid email or mobile");
@@ -62,11 +64,10 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(user.password, 12);
     user.password = hashedPassword;
 
+    const imageURL = await cloudinary.upload(req.files.idCardImage[0].path);
+    await User.create(user, { idCardImage: imageURL });
 
-    await User.create(user);
-
-    res.status(200).json({ message: 'Register success' });
-
+    res.status(200).json({ message: "Register success" });
   } catch (err) {
     next(err);
   }
