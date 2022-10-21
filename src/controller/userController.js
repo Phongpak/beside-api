@@ -18,8 +18,6 @@ exports.updateUser = async (req, res, next) => {
       isBan,
       providerRequestStatus,
       isAdmin,
-      firstName,
-      lastName,
       penName,
       hobby,
       gender,
@@ -27,6 +25,10 @@ exports.updateUser = async (req, res, next) => {
       bookAccountNumber,
       bankName,
       description,
+      language,
+      rate,
+      lat,
+      lng,
     } = req.body;
     const { id } = req.params;
 
@@ -92,8 +94,10 @@ exports.updateUser = async (req, res, next) => {
 
       await User.update(
         {
-          firstName,
-          lastName,
+          language,
+          rate,
+          lat,
+          lng,
           penName,
           hobby,
           gender,
