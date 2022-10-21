@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Order = sequelize.define(
-    'Order',
+    "Order",
     {
       appointmentDate: {
         type: DataTypes.DATEONLY,
@@ -39,9 +39,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       status: {
-        type: DataTypes.ENUM('PENDING', 'INPROGRESS', 'SUCCESS', 'REJECT'),
+        type: DataTypes.ENUM("PENDING", "INPROGRESS", "SUCCESS", "REJECT"),
         allowNull: false,
-        defaultValue: 'PENDING',
+        defaultValue: "PENDING",
         validate: { notEmpty: true },
       },
     },
@@ -50,43 +50,35 @@ module.exports = (sequelize, DataTypes) => {
   Order.associate = (db) => {
     Order.belongsTo(db.User, {
       foreignKey: {
-        name: 'customerId',
+        name: "customerId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     Order.belongsTo(db.User, {
       foreignKey: {
-        name: 'providerId',
+        name: "providerId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     Order.hasMany(db.OrderChat, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     Order.hasMany(db.Transaction, {
       foreignKey: {
-        name: 'orderId',
+        name: "orderId",
         allowNull: true,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
-    });
-    Order.hasMany(db.PinLocation, {
-      foreignKey: {
-        name: 'pinId',
-        allowNull: true,
-      },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
   };
   return Order;

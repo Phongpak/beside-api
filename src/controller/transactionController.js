@@ -14,7 +14,7 @@ exports.createTransaction = async (req, res, next) => {
   try {
     const { task, amount } = req.body;
     if (task === TASK_TOPUP) {
-      if (amount == 0) {
+      if (!amount || amount == 0) {
         throw new AppError("amount cant be zero", 400);
       }
       if (req.files?.slipImage) {
@@ -34,7 +34,7 @@ exports.createTransaction = async (req, res, next) => {
       throw new AppError("slipImage is required", 400);
     }
     if (task === TASK_WITHDRAW) {
-      if (amount == 0) {
+      if (!amount || amount == 0) {
         throw new AppError("amount cant be zero", 400);
       }
       if (req.user.wallet < amount) {
@@ -82,7 +82,14 @@ exports.updateTransaction = async (req, res, next) => {
           { wallet: newWallet },
           { where: { id: topupUser.id } }
         );
-        await Transaction.update({ status, comment }, { where: { id: id } });
+        await Transaction.update(
+          {
+            status,
+            comment,
+            amount: amount ? amount : selectedTransaction.amount,
+          },
+          { where: { id: id } }
+        );
         return res
           .status(201)
           .json({ message: "update topup transaction success" });

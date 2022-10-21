@@ -2,7 +2,7 @@ const cloudinary = require("../utils/cloudinary");
 const { ProfileImages } = require("../models");
 const AppError = require("../utils/appError");
 const fs = require("fs");
-const { User } = require("../models");
+const { User, DateAvailable, DateUnavailable } = require("../models");
 const {
   STATUS_NULL,
   STATUS_PENDING,
@@ -22,10 +22,8 @@ exports.updateUser = async (req, res, next) => {
       lastName,
       penName,
       hobby,
-      idCardImage,
       gender,
       sexuallyInterested,
-      bookBankImage,
       bookAccountNumber,
       bankName,
       description,
@@ -111,7 +109,6 @@ exports.updateUser = async (req, res, next) => {
       res.status(200).json({ message: "user update success" });
     }
   } catch (err) {
-    console.log(err);
     next(err);
   } finally {
     if (req.files?.profileImages) {

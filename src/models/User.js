@@ -112,6 +112,22 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM(STATUS_PENDING, STATUS_SUCCESS, STATUS_REJECT),
         allowNull: true,
       },
+      language: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      rate: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+      },
+      lat: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      lng: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     { underscored: true }
   );
@@ -156,14 +172,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
-    User.hasMany(db.PinLocation, {
-      foreignKey: {
-        name: "userId",
-        allowNull: false,
-      },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
-    });
+
     User.hasMany(db.ProfileImages, {
       foreignKey: {
         name: "userId",
