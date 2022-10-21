@@ -44,7 +44,7 @@ exports.updateUser = async (req, res, next) => {
       throw new AppError("unauthorized", 401);
     }
     if (req.user.id === +id) {
-      if (req.files.profileImages) {
+      if (req.files?.profileImages) {
         const oldProfileImages = await ProfileImages.findAll({
           where: { userId: req.user.id },
         });
@@ -64,7 +64,7 @@ exports.updateUser = async (req, res, next) => {
           await ProfileImages.create({ Image: URL, userId: req.user.id });
         }
       }
-      if (req.files.idCardImage) {
+      if (req.files?.idCardImage) {
         const oldIdCardImage = req.user.idCardImage;
         const imageURL = await cloudinary.upload(
           req.files.idCardImage[0].path,
@@ -72,7 +72,7 @@ exports.updateUser = async (req, res, next) => {
         );
         await User.update({ idCardImage: imageURL }, { where: { id: id } });
       }
-      if (req.files.bookBankImage) {
+      if (req.files?.bookBankImage) {
         const oldBookBankImage = req.user.bookBankImage;
         const imageURL = await cloudinary.upload(
           req.files.bookBankImage[0].path,
@@ -114,7 +114,7 @@ exports.updateUser = async (req, res, next) => {
     console.log(err);
     next(err);
   } finally {
-    if (req.files.profileImages) {
+    if (req.files?.profileImages) {
       const multiplePictureUnlinkPromise = req.files.profileImages.map(
         (profileImage) => {
           return fs.unlinkSync(profileImage.path);
@@ -122,10 +122,10 @@ exports.updateUser = async (req, res, next) => {
       );
       multiplePictureUnlinkPromise;
     }
-    if (req.files.idCardImage) {
+    if (req.files?.idCardImage) {
       fs.unlinkSync(req.files.idCardImage[0].path);
     }
-    if (req.files.bookBankImage) {
+    if (req.files?.bookBankImage) {
       fs.unlinkSync(req.files.bookBankImage[0].path);
     }
   }
