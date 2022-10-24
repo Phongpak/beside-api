@@ -5,11 +5,11 @@ const {
   STATUS_PENDING,
   STATUS_SUCCESS,
   STATUS_REJECT,
-} = require('../config/constants');
+} = require("../config/constants");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    'User',
+    "User",
     {
       isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -112,89 +112,106 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM(STATUS_PENDING, STATUS_SUCCESS, STATUS_REJECT),
         allowNull: true,
       },
+      language: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      rate: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+      },
+      lat: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      lng: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     { underscored: true }
   );
   User.associate = (db) => {
     User.hasMany(db.Order, {
       foreignKey: {
-        name: 'customerId',
+        name: "customerId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasMany(db.Order, {
       foreignKey: {
-        name: 'providerId',
+        name: "providerId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasMany(db.OrderChat, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasMany(db.Transaction, {
       foreignKey: {
-        name: 'senderId',
+        name: "senderId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasMany(db.Transaction, {
       foreignKey: {
-        name: 'receiverId',
+        name: "receiverId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
-    User.hasMany(db.PinLocation, {
-      foreignKey: {
-        name: 'userId',
-        allowNull: false,
-      },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
-    });
+
     User.hasMany(db.ProfileImages, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasMany(db.SupportChat, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasOne(db.SupportChat, {
       foreignKey: {
-        name: 'userRoom',
+        name: "userRoom",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
     User.hasOne(db.DateAvailable, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+    User.hasOne(db.DateUnavailable, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
   };
   return User;

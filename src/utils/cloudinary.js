@@ -13,6 +13,18 @@ exports.upload = async (path, publicId) => {
   return res.secure_url;
 };
 
+exports.destroy = async (path, publicId) => {
+  const option = {
+    use_filename: true,
+    overwrite: true,
+    unique_filename: false,
+  };
+  if (publicId) {
+    option.public_id = publicId;
+  }
+  await cloudinary.uploader.destroy(path, option);
+};
+
 exports.getPublicId = (url) => {
   const splitSlash = url.split("/");
   return splitSlash[splitSlash.length - 1].split(".")[0];

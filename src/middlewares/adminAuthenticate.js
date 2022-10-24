@@ -28,6 +28,9 @@ module.exports = async (req, res, next) => {
     if (!user) {
       throw new AppError("unauthenticated3", 401);
     }
+    if (user.admin === false) {
+      throw new AppError("unauthenticated4", 401);
+    }
     req.user = user;
     next();
   } catch (err) {
