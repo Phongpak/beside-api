@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-  const DateAvailable = sequelize.define(
-    'DateAvailable',
+  const DateUnavailable = sequelize.define(
+    "DateUnavailable",
     {
-      weekday: {
-        type: DataTypes.ENUM('0', '1', '2', '3', '4', '5', '6'),
+      unavailableDate: {
+        type: DataTypes.DATE,
         allowNull: false,
         validate: { notEmpty: true },
       },
@@ -20,15 +20,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     { underscord: true }
   );
-  DateAvailable.associate = (db) => {
-    DateAvailable.belongsTo(db.User, {
+  DateUnavailable.associate = (db) => {
+    DateUnavailable.belongsTo(db.User, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
   };
-  return DateAvailable;
+  return DateUnavailable;
 };

@@ -3,9 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     "Order",
     {
       appointmentDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
-        defaultValue: 0,
         validate: { notEmpty: true },
       },
       fromTime: {
@@ -76,14 +75,6 @@ module.exports = (sequelize, DataTypes) => {
     Order.hasMany(db.Transaction, {
       foreignKey: {
         name: "orderId",
-        allowNull: true,
-      },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
-    });
-    Order.hasMany(db.PinLocation, {
-      foreignKey: {
-        name: "pinId",
         allowNull: true,
       },
       onDelete: "RESTRICT",
