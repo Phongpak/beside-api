@@ -2,6 +2,7 @@ const { User, Transaction } = require("../models");
 const cloudinary = require("../utils/cloudinary");
 const fs = require("fs");
 const AppError = require("../utils/appError");
+const { Op } = require("sequelize");
 const {
   TASK_ORDER,
   TASK_TOPUP,
@@ -106,6 +107,20 @@ exports.updateTransaction = async (req, res, next) => {
       throw new AppError("status invalid", 400);
     }
     throw new AppError("task invalid", 400);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getTransactionByUserId = async (req, res, next) => {
+  try {
+    const transactions = await User.findAll({
+      where: {
+        [Op.or]: [{ receiverId: req.user.id }, { senderId: req.user.id }],
+      },
+    });
+
+    res.status(201).json({ transactions });
   } catch (err) {
     next(err);
   }

@@ -1,8 +1,8 @@
 const cloudinary = require("../utils/cloudinary");
-const { ProfileImages } = require("../models");
 const AppError = require("../utils/appError");
 const fs = require("fs");
-const { User, DateAvailable, DateUnavailable } = require("../models");
+const { User, ProfileImages } = require("../models");
+const { Op } = require("sequelize");
 const {
   STATUS_NULL,
   STATUS_PENDING,
@@ -145,6 +145,68 @@ exports.deleteProfileImage = async (req, res, next) => {
     await cloudinary.destroy(cloudinary.getPublicId(image.Image));
     await image.destroy();
     res.status(201).json({ message: "delete success" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllProviderByLatLng = async (req, res, next) => {
+  const { lat, lng, radius } = req.params;
+  function CoordDistance(lat, lng) {
+    RadiansLat = (lat * Math.PI) / 180;
+    RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
+    RadiansLng = (lng * Math.PI) / 180;
+    RadiansLng2 = ((+lng + 1) * Math.PI) / 180;
+
+    return (
+      6371 *
+      Math.acos(
+        Math.sin(RadiansLat) * Math.sin(RadiansLat2) +
+          Math.cos(RadiansLat) *
+            Math.cos(RadiansLat2) *
+            Math.cos(RadiansLng2 - RadiansLng)
+      )
+    );
+  }
+
+  const distance = CoordDistance(lat, lng);
+  const calculated = radius / distance;
+
+  try {
+    const provider = await User.findAll({
+      where: {
+        [Op.and]: [
+          {
+            [Op.and]: [
+              { lat: { [Op.gte]: +lat - calculated } },
+              { lat: { [Op.lte]: +lat + calculated } },
+            ],
+          },
+          {
+            [Op.and]: [
+              { lng: { [Op.gte]: +lng - calculated } },
+              { lng: { [Op.lte]: +lng + calculated } },
+            ],
+          },
+          {
+            isBan: false,
+          },
+        ],
+      },
+    });
+
+    res.status(201).json({ provider });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getProfileImages = async (req, res, next) => {
+  try {
+    const profileImages = ProfileImages.findAll({
+      where: { userId: req.user.id },
+    });
+    res.status(201).json({ profileImages });
   } catch (err) {
     next(err);
   }

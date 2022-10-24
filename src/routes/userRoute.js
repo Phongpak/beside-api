@@ -16,4 +16,11 @@ router.patch(
 
 router.delete("/:id", userController.deleteProfileImage);
 
+router.get(
+  "/provider/:lat/:lng/:radius",
+  userController.getAllProviderByLatLng
+);
+
+router.get("/profileImages", userController.getProfileImages);
+
 module.exports = router;

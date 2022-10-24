@@ -18,4 +18,6 @@ router.patch(
   transactionController.updateTransaction
 );
 
+router.get("/", authenticate, transactionController.getTransactionByUserId);
+
 module.exports = router;

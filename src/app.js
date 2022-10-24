@@ -16,6 +16,7 @@ const userRoute = require("./routes/userRoute");
 const adminRoute = require("./routes/adminRoute");
 const transactionRoute = require("./routes/transactionRoute");
 const dateRoute = require("./routes/dateRoute");
+const orderRoute = require("./routes/orderRoute");
 
 //middlewares import
 const notFound = require("./middlewares/notFound");
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoute);
 app.use("/user", authenticate, userRoute);
 app.use("/date", authenticate, dateRoute);
+app.use("/order", authenticate, orderRoute);
 app.use("/transaction", transactionRoute);
 app.use("/admin", adminAuthenticate, adminRoute);
 

@@ -6,15 +6,16 @@ const moment = MomentRange.extendMoment(Moment);
 
 exports.dateCreate = async (req, res, next) => {
   try {
-    const create = req.body.map((item) => {
-      return DateAvailable.create({
-        weekday: item.date,
-        fromTime: item.fromTime,
-        toTime: item.toTime,
-        userId: req.user.id,
-      });
+    const { weekday, fromTime, toTime } = req.body;
+    const check = await DateAvailable.findAll({
+      where: { user: req.user.id },
     });
-    await Promise.all(create);
+    const create = await DateAvailable.create({
+      weekday,
+      fromTime,
+      toTime,
+      userId: req.user.id,
+    });
 
     res.status(201).json({ message: "create done" });
   } catch (err) {
