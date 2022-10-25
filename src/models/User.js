@@ -1,3 +1,12 @@
+const {
+  SEX_MALE,
+  SEX_FEMALE,
+  SEX_NOTSPECIFIC,
+  STATUS_PENDING,
+  STATUS_SUCCESS,
+  STATUS_REJECT,
+} = require("../config/constants");
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
@@ -8,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         validate: { notEmpty: true },
       },
-      username: {
-        type: DataTypes.STRING,
+      isVerify: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        validate: { notEmpty: true },
+        defaultValue: false,
       },
       password: {
         type: DataTypes.STRING,
@@ -28,9 +37,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: { notEmpty: true },
       },
-      penName: {
+      nationality: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: { notEmpty: true },
+      },
+      penName: {
+        type: DataTypes.STRING,
         validate: { notEmpty: true },
       },
       email: {
@@ -49,23 +62,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       idCardImage: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: { notEmpty: true },
       },
-      age: {
-        type: DataTypes.INTEGER,
+      birthDate: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: { notEmpty: true },
       },
       gender: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
+        type: DataTypes.ENUM(SEX_MALE, SEX_FEMALE, SEX_NOTSPECIFIC),
         allowNull: false,
         validate: { notEmpty: true },
       },
       sexuallyInterested: {
-        type: DataTypes.ENUM("MALE", "FEMALE", "NOT_SPECIFIC"),
-        allowNull: false,
-        validate: { notEmpty: true },
+        type: DataTypes.ENUM(SEX_MALE, SEX_FEMALE, SEX_NOTSPECIFIC),
       },
       bookBankImage: {
         type: DataTypes.STRING,
@@ -100,11 +109,27 @@ module.exports = (sequelize, DataTypes) => {
         validate: { notEmpty: true },
       },
       providerRequestStatus: {
-        type: DataTypes.ENUM("PENDING", "SUCCESS", "REJECT"),
+        type: DataTypes.ENUM(STATUS_PENDING, STATUS_SUCCESS, STATUS_REJECT),
+        allowNull: true,
+      },
+      language: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      rate: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+      },
+      lat: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      lng: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },
-    { underscord: true }
+    { underscored: true }
   );
   User.associate = (db) => {
     User.hasMany(db.Order, {
@@ -147,14 +172,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
-    User.hasMany(db.PinLocation, {
-      foreignKey: {
-        name: "userId",
-        allowNull: false,
-      },
-      onDelete: "RESTRICT",
-      onUpdate: "RESTRICT",
-    });
+
     User.hasMany(db.ProfileImages, {
       foreignKey: {
         name: "userId",
@@ -180,6 +198,14 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
     User.hasOne(db.DateAvailable, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
+    });
+    User.hasOne(db.DateUnavailable, {
       foreignKey: {
         name: "userId",
         allowNull: false,
