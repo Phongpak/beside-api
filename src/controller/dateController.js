@@ -6,9 +6,12 @@ const moment = MomentRange.extendMoment(Moment);
 
 exports.dateCreate = async (req, res, next) => {
   try {
+    if (req.user.providerRequestStatus != "SUCCESS") {
+      throw new AppError("user is not provider");
+    }
     const { weekday, fromTime, toTime } = req.body;
     const check = await DateAvailable.findAll({
-      where: { user: req.user.id },
+      where: { userId: req.user.id },
     });
     const create = await DateAvailable.create({
       weekday,
@@ -68,7 +71,7 @@ exports.dateUnavailableDelete = async (req, res, next) => {
     if (selected.userId != req.user.id) {
       throw new AppError("cant delete others DateUnavailable", 400);
     }
-    await DateAvailable.destroy({ where: { id } });
+    await DateUnavailable.destroy({ where: { id } });
 
     res.status(201).json({ message: "delete done" });
   } catch (err) {

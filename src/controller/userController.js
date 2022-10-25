@@ -203,8 +203,9 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
 
 exports.getProfileImages = async (req, res, next) => {
   try {
-    const profileImages = ProfileImages.findAll({
-      where: { userId: req.user.id },
+    const { id } = req.params;
+    const profileImages = await ProfileImages.findAll({
+      where: { userId: id },
     });
     res.status(201).json({ profileImages });
   } catch (err) {
