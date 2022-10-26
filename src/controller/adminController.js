@@ -3,7 +3,10 @@ const AppError = require("../utils/appError");
 
 exports.getUser = async (req, res, next) => {
   try {
-    const users = await User.findAll({ order: [["createdAt", "DESC"]] });
+    const users = await User.findAll({
+      order: [["createdAt", "DESC"]],
+      attributes: { exclude: "password" },
+    });
     res.status(201).json({ users });
   } catch (err) {
     next(err);
