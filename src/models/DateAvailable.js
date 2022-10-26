@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
   const DateAvailable = sequelize.define(
-    'DateAvailable',
+    "DateAvailable",
     {
       weekday: {
-        type: DataTypes.ENUM('0', '1', '2', '3', '4', '5', '6'),
+        type: DataTypes.ENUM("0", "1", "2", "3", "4", "5", "6"),
         allowNull: false,
         validate: { notEmpty: true },
       },
@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
   DateAvailable.associate = (db) => {
     DateAvailable.belongsTo(db.User, {
       foreignKey: {
-        name: 'userId',
+        name: "userId",
         allowNull: false,
       },
-      onDelete: 'RESTRICT',
-      onUpdate: 'RESTRICT',
+      onDelete: "RESTRICT",
+      onUpdate: "RESTRICT",
     });
   };
   return DateAvailable;
