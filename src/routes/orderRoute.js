@@ -3,8 +3,7 @@ const orderController = require("../controller/orderController");
 
 const router = express.Router();
 
-router.get("/customer", orderController.getOrderMyCustomers);
-router.get("/provider", orderController.getOrderMyProviders);
+router.get("/", orderController.getMyOrders);
 router.post("/", orderController.createOrder);
 router.patch("/:id", orderController.updateOrder);
 

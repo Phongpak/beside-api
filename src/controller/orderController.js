@@ -369,18 +369,14 @@ exports.updateOrder = async (req, res, next) => {
   }
 };
 
-exports.getOrderMyCustomers = async (req, res, next) => {
+exports.getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.findAll({ where: { providerId: req.user.id } });
-    res.status(201).json({ orders });
-  } catch (err) {
-    next(err);
-  }
-};
+    const orders = await Order.findAll({
+      where: {
+        [Op.or]: [{ providerId: req.user.id }, { customerId: req.user.id }],
+      },
+    });
 
-exports.getOrderMyProviders = async (req, res, next) => {
-  try {
-    const orders = await Order.findAll({ where: { customerId: req.user.id } });
     res.status(201).json({ orders });
   } catch (err) {
     next(err);
