@@ -114,7 +114,7 @@ exports.updateTransaction = async (req, res, next) => {
 
 exports.getTransactionByUserId = async (req, res, next) => {
   try {
-    const transactions = await User.findAll({
+    const transactions = await Transaction.findAll({
       where: {
         [Op.or]: [{ receiverId: req.user.id }, { senderId: req.user.id }],
       },
