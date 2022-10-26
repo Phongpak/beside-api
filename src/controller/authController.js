@@ -66,7 +66,7 @@ exports.register = async (req, res, next) => {
     const imageURL = await cloudinary.upload(req.files.idCardImage[0].path);
     user.idCardImage = imageURL;
     await User.create(user);
-
+    console.log("kuy");
     res.status(200).json({ message: "Register success" });
   } catch (err) {
     next(err);

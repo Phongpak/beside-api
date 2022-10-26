@@ -109,8 +109,11 @@ exports.updateUser = async (req, res, next) => {
         },
         { where: { id: id } }
       );
-
-      res.status(200).json({ message: "user update success" });
+      const user = await User.findOne({
+        where: { id: id },
+        attributes: { exclude: "password" },
+      });
+      res.status(200).json({ user: user, message: "user update success" });
     }
   } catch (err) {
     next(err);
