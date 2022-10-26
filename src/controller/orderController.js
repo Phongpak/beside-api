@@ -216,6 +216,24 @@ exports.updateOrder = async (req, res, next) => {
       customerReviewRating,
     } = req.body;
     const order = await Order.findOne({ where: { id } });
+    //------------------------------------CUSTOMER
+    if (order.customerId == req.user.id) {
+      //--------SUCCESS COMMENT
+      if (
+        order.status == STATUS_SUCCESS &&
+        !order.providerReviewDescription &&
+        !order.providerReviewRating
+      ) {
+        await Order.update(
+          {
+            providerReviewDescription,
+            providerReviewRating,
+          },
+          { where: { id } }
+        );
+        res.status(201).json({ message: "update done" });
+      }
+    }
     //------------------------------------PROVIDER
     if (order.providerId == req.user.id) {
       //--------INPROGRESS
@@ -289,6 +307,21 @@ exports.updateOrder = async (req, res, next) => {
         await User.update(
           { wallet: newWallet },
           { where: { id: order.customerId } }
+        );
+        res.status(201).json({ message: "update done" });
+      }
+      //--------SUCCESS COMMENT
+      if (
+        order.status == STATUS_SUCCESS &&
+        !order.customerReviewDescription &&
+        !order.customerReviewRating
+      ) {
+        await Order.update(
+          {
+            customerReviewDescription,
+            customerReviewRating,
+          },
+          { where: { id } }
         );
         res.status(201).json({ message: "update done" });
       }
