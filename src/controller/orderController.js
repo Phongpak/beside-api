@@ -22,7 +22,8 @@ const {
 exports.createOrder = async (req, res, next) => {
   try {
     //------------------------------------Variables
-    const { appointmentDate, fromTime, toTime, providerId } = req.body;
+    const { appointmentDate, fromTime, toTime, providerId, description } =
+      req.body;
     if (!appointmentDate || !fromTime || !toTime || !providerId) {
       throw new AppError(
         "rerquire appointmentDate ,fromTime ,toTime ,providerId"
@@ -170,6 +171,7 @@ exports.createOrder = async (req, res, next) => {
             fromTime,
             toTime,
             rentPriceTotal,
+            description,
             status: STATUS_PENDING,
           });
           await Transaction.create({
