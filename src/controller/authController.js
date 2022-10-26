@@ -63,9 +63,9 @@ exports.register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(user.password, 12);
     user.password = hashedPassword;
-
     const imageURL = await cloudinary.upload(req.files.idCardImage[0].path);
-    await User.create(user, { idCardImage: imageURL });
+    user.idCardImage = imageURL;
+    await User.create(user);
 
     res.status(200).json({ message: "Register success" });
   } catch (err) {
