@@ -28,6 +28,13 @@ module.exports = async (req, res, next) => {
     if (!user) {
       throw new AppError("unauthenticated3", 401);
     }
+
+    if (user.isBan) {
+      throw new AppError("unauthenticated4", 401);
+    }
+    if (!user.isVerify) {
+      throw new AppError("unauthenticated5", 401);
+    }
     req.user = user;
     next();
   } catch (err) {

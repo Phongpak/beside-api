@@ -29,6 +29,7 @@ exports.updateUser = async (req, res, next) => {
       rate,
       lat,
       lng,
+      location,
     } = req.body;
     const { id } = req.params;
 
@@ -106,6 +107,7 @@ exports.updateUser = async (req, res, next) => {
           bankName,
           description,
           providerRequestStatus,
+          location,
         },
         { where: { id: id } }
       );
