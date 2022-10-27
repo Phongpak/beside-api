@@ -137,6 +137,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = (db) => {
     User.hasMany(db.Order, {
+      as: "customer",
       foreignKey: {
         name: "customerId",
         allowNull: false,
@@ -145,6 +146,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
     User.hasMany(db.Order, {
+      as: "provider",
       foreignKey: {
         name: "providerId",
         allowNull: false,
