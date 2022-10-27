@@ -1,7 +1,7 @@
 const cloudinary = require("../utils/cloudinary");
 const AppError = require("../utils/appError");
 const fs = require("fs");
-const { User, ProfileImages } = require("../models");
+const { User, ProfileImages, Order } = require("../models");
 const { Op } = require("sequelize");
 const {
   STATUS_NULL,
@@ -213,6 +213,29 @@ exports.getProfileImages = async (req, res, next) => {
       where: { userId: id },
     });
     res.status(201).json({ profileImages });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getUserProfiles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findAll({
+      where: { id },
+      attributes: { exclude: "password" },
+      include: [
+        {
+          model: ProfileImages,
+          attributes: ["id", "Image", "userId"],
+        },
+        {
+          model: Order,
+          as: "provider",
+        },
+      ],
+    });
+    res.status(201).json({ user });
   } catch (err) {
     next(err);
   }

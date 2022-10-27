@@ -34,3 +34,15 @@ exports.getOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await User.destroy({
+      where: { id },
+    });
+    res.status(201).json({ message: "delete done" });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -23,4 +23,6 @@ router.get(
 
 router.get("/profileImages/:id", userController.getProfileImages);
 
+router.get("/:id", userController.getUserProfiles);
+
 module.exports = router;
