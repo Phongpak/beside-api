@@ -220,7 +220,7 @@ exports.getUserProfiles = async (req, res, next) => {
     const { id } = req.params;
     const user = await User.findAll({
       where: { id },
-      attributes: { excludes: "password" },
+      attributes: { exclude: "password" },
       include: [
         {
           model: ProfileImages,
