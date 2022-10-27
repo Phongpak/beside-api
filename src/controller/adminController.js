@@ -3,7 +3,10 @@ const AppError = require("../utils/appError");
 
 exports.getUser = async (req, res, next) => {
   try {
-    const users = await User.findAll({ order: [["createdAt", "DESC"]] });
+    const users = await User.findAll({
+      order: [["createdAt", "DESC"]],
+      attributes: { exclude: "password" },
+    });
     res.status(201).json({ users });
   } catch (err) {
     next(err);
@@ -27,6 +30,18 @@ exports.getOrder = async (req, res, next) => {
       order: [["createdAt", "DESC"]],
     });
     res.status(201).json({ orders });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await User.destroy({
+      where: { id },
+    });
+    res.status(201).json({ message: "delete done" });
   } catch (err) {
     next(err);
   }
