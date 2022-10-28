@@ -95,7 +95,12 @@ exports.createOrder = async (req, res, next) => {
       where: { userId: providerId },
     });
     const selectedDateOrders = await Order.findAll({
-      where: { providerId, appointmentDate, status: STATUS_INPROGRESS },
+      where: {
+        [Op.or]: [
+          { providerId, appointmentDate, status: STATUS_INPROGRESS },
+          { providerId, appointmentDate, status: STATUS_SUCCESS },
+        ],
+      },
     });
 
     const dateAvaMap = dateAva.some((item) => {
