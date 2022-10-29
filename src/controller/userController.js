@@ -152,6 +152,7 @@ exports.deleteProfileImage = async (req, res, next) => {
 
 exports.getAllProviderByLatLng = async (req, res, next) => {
   const { lat, lng, radius } = req.params;
+  console.log(lat, lng, radius);
   function CoordDistance(lat, lng) {
     RadiansLat = (lat * Math.PI) / 180;
     RadiansLat2 = ((+lat + 1) * Math.PI) / 180;

@@ -180,6 +180,10 @@ module.exports = {
         provider_request_status: STATUS_SUCCESS,
         created_at: new Date(),
         updated_at: new Date(),
+        language: "Thai",
+        rate: 2000,
+        lat: "13.7781783",
+        lng: "100.5735217",
       },
       {
         is_admin: false,
@@ -207,6 +211,10 @@ module.exports = {
         provider_request_status: STATUS_SUCCESS,
         created_at: new Date(),
         updated_at: new Date(),
+        language: "English",
+        rate: 800,
+        lat: "13.7462411",
+        lng: "100.5347402",
       },
       {
         is_admin: false,
@@ -234,6 +242,10 @@ module.exports = {
         provider_request_status: STATUS_SUCCESS,
         created_at: new Date(),
         updated_at: new Date(),
+        language: "Thai",
+        rate: 500,
+        lat: "13.7462411",
+        lng: "100.5347402",
       },
       {
         is_admin: false,
