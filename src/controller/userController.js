@@ -168,6 +168,8 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
   try {
     const { lat, lng, radius } = req.params;
     const { appointmentDate, fromTime, toTime } = req.body;
+    console.log(lat, lng, radius);
+    console.log(appointmentDate, fromTime, toTime);
     function CoordDistance(lat, lng) {
       RadiansLat = (lat * Math.PI) / 180;
       RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
