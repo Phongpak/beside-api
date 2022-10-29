@@ -28,7 +28,7 @@ exports.createOrder = async (req, res, next) => {
       fromTime,
       toTime,
       providerId,
-      descriptionm,
+      description,
       lat,
       lng,
       location,
