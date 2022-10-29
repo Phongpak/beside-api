@@ -47,6 +47,8 @@ app.use(notFound);
 app.use(error);
 
 //server runner
-app.listen(process.env.PORT, () => {
-  console.log(`app server listening on port ${process.env.PORT}`);
-});
+// app.listen(process.env.PORT, () => {
+//   console.log(`app server listening on port ${process.env.PORT}`);
+// });
+
+module.exports = app;

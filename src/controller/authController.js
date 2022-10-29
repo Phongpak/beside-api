@@ -66,7 +66,7 @@ exports.register = async (req, res, next) => {
     const imageURL = await cloudinary.upload(req.files.idCardImage[0].path);
     user.idCardImage = imageURL;
     await User.create(user);
-    console.log("kuy");
+
     res.status(200).json({ message: "Register success" });
   } catch (err) {
     next(err);
@@ -76,6 +76,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log("req.body", req.body);
 
     if (typeof email !== "string") {
       throw new AppError("email address  password is invalid", 400);
