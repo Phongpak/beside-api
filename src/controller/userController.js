@@ -8,7 +8,7 @@ const {
   DateAvailable,
   DateUnavailable,
 } = require("../models");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const Moment = require("moment");
 const MomentRange = require("moment-range");
 const moment = MomentRange.extendMoment(Moment);
@@ -230,8 +230,8 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
       return DateAvailable.findAll({
         where: {
           weekday: "" + selectedWeekday,
-          fromTime: { [Op.lte]: fromTime },
-          toTime: { [Op.gte]: toTime },
+          fromTime: { [Op.lte]: DateFromTime.format(`HH:mm:ss`) },
+          toTime: { [Op.gte]: DateToTime.format(`HH:mm:ss`) },
           userId: item.dataValues.id,
         },
       });
@@ -246,12 +246,18 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
             [Op.or]: [
               {
                 fromTime: {
-                  [Op.between]: [fromTime, toTime],
+                  [Op.between]: [
+                    DateFromTime.format(`HH:mm:ss`),
+                    DateToTime.format(`HH:mm:ss`),
+                  ],
                 },
               },
               {
                 toTime: {
-                  [Op.between]: [fromTime, toTime],
+                  [Op.between]: [
+                    DateFromTime.format(`HH:mm:ss`),
+                    DateToTime.format(`HH:mm:ss`),
+                  ],
                 },
               },
             ],
@@ -284,12 +290,18 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
               [Op.or]: [
                 {
                   fromTime: {
-                    [Op.between]: [fromTime, toTime],
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
                   },
                 },
                 {
                   toTime: {
-                    [Op.between]: [fromTime, toTime],
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
                   },
                 },
               ],
@@ -301,12 +313,18 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
               [Op.or]: [
                 {
                   fromTime: {
-                    [Op.between]: [fromTime, toTime],
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
                   },
                 },
                 {
                   toTime: {
-                    [Op.between]: [fromTime, toTime],
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
                   },
                 },
               ],
@@ -342,10 +360,28 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
           id: item,
         },
         attributes: { exclude: "password" },
+        include: [
+          {
+            model: Order,
+            as: "provider",
+            attributes: [
+              [
+                Sequelize.fn("COUNT", Sequelize.col("providerReviewRating")),
+                "total_rating",
+              ],
+              [
+                Sequelize.fn("AVG", Sequelize.col("providerReviewRating")),
+                "average_rating",
+              ],
+            ],
+            where: { providerId: item },
+          },
+        ],
       });
     });
 
     const finalAvailableProviders = await Promise.all(AvailableProviders);
+
     res.status(201).json({ finalAvailableProviders });
   } catch (err) {
     next(err);

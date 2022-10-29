@@ -1,4 +1,4 @@
-const { User, Transaction } = require("../models");
+const { User, Transaction, ProfileImages } = require("../models");
 const AppError = require("../utils/appError");
 
 exports.getUser = async (req, res, next) => {
