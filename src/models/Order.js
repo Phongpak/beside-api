@@ -42,6 +42,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      lat: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      lng: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       status: {
         type: DataTypes.ENUM("PENDING", "INPROGRESS", "SUCCESS", "REJECT"),
         allowNull: false,
@@ -53,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Order.associate = (db) => {
     Order.belongsTo(db.User, {
+      as: "customer",
       foreignKey: {
         name: "customerId",
         allowNull: false,
@@ -61,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
     Order.belongsTo(db.User, {
+      as: "provider",
       foreignKey: {
         name: "providerId",
         allowNull: false,
