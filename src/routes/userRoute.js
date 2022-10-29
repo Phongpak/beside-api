@@ -16,7 +16,7 @@ router.patch(
 
 router.delete("/:id", userController.deleteProfileImage);
 
-router.get(
+router.post(
   "/provider/:lat/:lng/:radius",
   userController.getAllProviderByLatLng
 );
