@@ -178,7 +178,6 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
-
     User.hasMany(db.ProfileImages, {
       foreignKey: {
         name: "userId",
