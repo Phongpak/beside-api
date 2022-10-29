@@ -120,8 +120,11 @@ exports.updateUser = async (req, res, next) => {
         },
         { where: { id: id } }
       );
-
-      res.status(200).json({ message: "user update success" });
+      const user = await User.findOne({
+        where: { id: id },
+        attributes: { exclude: "password" },
+      });
+      res.status(200).json({ user: user, message: "user update success" });
     }
   } catch (err) {
     next(err);
@@ -165,6 +168,8 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
   try {
     const { lat, lng, radius } = req.params;
     const { appointmentDate, fromTime, toTime } = req.body;
+    console.log(lat, lng, radius);
+    console.log(appointmentDate, fromTime, toTime);
     function CoordDistance(lat, lng) {
       RadiansLat = (lat * Math.PI) / 180;
       RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
