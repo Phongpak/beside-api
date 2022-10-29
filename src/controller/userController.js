@@ -1,7 +1,7 @@
 const cloudinary = require("../utils/cloudinary");
 const AppError = require("../utils/appError");
 const fs = require("fs");
-const { User, ProfileImages } = require("../models");
+const { User, ProfileImages, Order } = require("../models");
 const { Op } = require("sequelize");
 const {
   STATUS_NULL,
@@ -29,6 +29,7 @@ exports.updateUser = async (req, res, next) => {
       rate,
       lat,
       lng,
+      location,
     } = req.body;
     const { id } = req.params;
 
@@ -106,11 +107,15 @@ exports.updateUser = async (req, res, next) => {
           bankName,
           description,
           providerRequestStatus,
+          location,
         },
         { where: { id: id } }
       );
-
-      res.status(200).json({ message: "user update success" });
+      const user = await User.findOne({
+        where: { id: id },
+        attributes: { exclude: "password" },
+      });
+      res.status(200).json({ user: user, message: "user update success" });
     }
   } catch (err) {
     next(err);
@@ -203,10 +208,34 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
 
 exports.getProfileImages = async (req, res, next) => {
   try {
-    const profileImages = ProfileImages.findAll({
-      where: { userId: req.user.id },
+    const { id } = req.params;
+    const profileImages = await ProfileImages.findAll({
+      where: { userId: id },
     });
     res.status(201).json({ profileImages });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getUserProfiles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findAll({
+      where: { id },
+      attributes: { exclude: "password" },
+      include: [
+        {
+          model: ProfileImages,
+          attributes: ["id", "Image", "userId"],
+        },
+        {
+          model: Order,
+          as: "provider",
+        },
+      ],
+    });
+    res.status(201).json({ user });
   } catch (err) {
     next(err);
   }

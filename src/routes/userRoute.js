@@ -21,6 +21,8 @@ router.get(
   userController.getAllProviderByLatLng
 );
 
-router.get("/profileImages", userController.getProfileImages);
+router.get("/profileImages/:id", userController.getProfileImages);
+
+router.get("/:id", userController.getUserProfiles);
 
 module.exports = router;

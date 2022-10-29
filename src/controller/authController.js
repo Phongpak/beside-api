@@ -63,10 +63,10 @@ exports.register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(user.password, 12);
     user.password = hashedPassword;
-
     const imageURL = await cloudinary.upload(req.files.idCardImage[0].path);
-    await User.create(user, { idCardImage: imageURL });
-
+    user.idCardImage = imageURL;
+    await User.create(user);
+    console.log("kuy");
     res.status(200).json({ message: "Register success" });
   } catch (err) {
     next(err);
@@ -86,6 +86,12 @@ exports.login = async (req, res, next) => {
     });
     if (!user) {
       throw new AppError("email address or password is invalid", 400);
+    }
+    if (user.isBan) {
+      throw new AppError("banned", 401);
+    }
+    if (!user.isVerify) {
+      throw new AppError("not yet verified", 401);
     }
 
     const isCorrect = await bcrypt.compare(password, user.password);
