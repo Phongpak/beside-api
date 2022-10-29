@@ -19,7 +19,6 @@ const {
   STATUS_SUCCESS,
   STATUS_REJECT,
 } = require("../config/constants");
-const { resourceLimits } = require("worker_threads");
 
 exports.updateUser = async (req, res, next) => {
   try {

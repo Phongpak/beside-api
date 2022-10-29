@@ -6,6 +6,12 @@ exports.getUser = async (req, res, next) => {
     const users = await User.findAll({
       order: [["createdAt", "DESC"]],
       attributes: { exclude: "password" },
+      include: [
+        {
+          model: ProfileImages,
+          attributes: ["id", "Image", "userId"],
+        },
+      ],
     });
     res.status(201).json({ users });
   } catch (err) {
