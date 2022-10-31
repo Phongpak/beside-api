@@ -84,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Order.hasMany(db.OrderChat, {
       foreignKey: {
-        name: "userId",
+        name: "orderId",
         allowNull: false,
       },
       onDelete: "RESTRICT",
