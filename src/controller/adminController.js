@@ -27,7 +27,17 @@ exports.getTransaction = async (req, res, next) => {
         {
           model: User,
           as: "sender",
-          attributes: ["id", "firstName", "lastName", "penName", "email"],
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "penName",
+            "email",
+            "bookBankImage",
+            "bookAccountNumber",
+            "bankName",
+            "mobile",
+          ],
           include: [
             {
               model: ProfileImages,
@@ -38,7 +48,17 @@ exports.getTransaction = async (req, res, next) => {
         {
           model: User,
           as: "receiver",
-          attributes: ["id", "firstName", "lastName", "penName", "email"],
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "penName",
+            "email",
+            "bookBankImage",
+            "bookAccountNumber",
+            "bankName",
+            "mobile",
+          ],
           include: [
             {
               model: ProfileImages,
