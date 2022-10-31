@@ -418,6 +418,30 @@ exports.getUserProfiles = async (req, res, next) => {
         {
           model: Order,
           as: "provider",
+          attributes: [
+            "appointmentDate",
+            "fromTime",
+            "toTime",
+            "rentPriceTotal",
+            "providerReviewDescription",
+            "customerReviewDescription",
+            "providerReviewRating",
+            "customerReviewRating",
+            "description",
+            "lat",
+            "lng",
+            "location",
+            "status",
+            [
+              Sequelize.fn("COUNT", Sequelize.col("providerReviewRating")),
+              "total_rating",
+            ],
+            [
+              Sequelize.fn("AVG", Sequelize.col("providerReviewRating")),
+              "average_rating",
+            ],
+          ],
+          where: { providerId: item },
         },
       ],
     });
