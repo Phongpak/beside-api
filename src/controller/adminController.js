@@ -9,7 +9,7 @@ exports.getUser = async (req, res, next) => {
       include: [
         {
           model: ProfileImages,
-          attributes: ["id", "Image", "userId"],
+          attributes: ["id", "Image", "userId", "isShow"],
         },
       ],
     });
@@ -41,7 +41,7 @@ exports.getTransaction = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },
@@ -62,7 +62,7 @@ exports.getTransaction = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },
@@ -86,7 +86,7 @@ exports.getOrder = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },
@@ -97,7 +97,7 @@ exports.getOrder = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },

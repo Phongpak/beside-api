@@ -408,7 +408,7 @@ exports.getOrdersById = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },
@@ -419,7 +419,7 @@ exports.getOrdersById = async (req, res, next) => {
           include: [
             {
               model: ProfileImages,
-              attributes: ["id", "Image", "userId"],
+              attributes: ["id", "Image", "userId", "isShow"],
             },
           ],
         },

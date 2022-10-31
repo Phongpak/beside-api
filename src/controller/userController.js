@@ -379,6 +379,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
               ],
             ],
             where: { providerId: item },
+            required: false,
           },
         ],
       });
@@ -413,7 +414,7 @@ exports.getUserProfiles = async (req, res, next) => {
       include: [
         {
           model: ProfileImages,
-          attributes: ["id", "Image", "userId"],
+          attributes: ["id", "Image", "userId", "isShow"],
         },
         {
           model: Order,
@@ -441,7 +442,8 @@ exports.getUserProfiles = async (req, res, next) => {
               "average_rating",
             ],
           ],
-          where: { providerId: item },
+          where: { providerId: id },
+          required: false,
         },
       ],
     });
