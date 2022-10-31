@@ -168,8 +168,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
   try {
     const { lat, lng, radius } = req.params;
     const { appointmentDate, fromTime, toTime } = req.body;
-    console.log(lat, lng, radius);
-    console.log(appointmentDate, fromTime, toTime);
+
     function CoordDistance(lat, lng) {
       RadiansLat = (lat * Math.PI) / 180;
       RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
@@ -423,6 +422,35 @@ exports.getUserProfiles = async (req, res, next) => {
       ],
     });
     res.status(201).json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateProfileImage = async (req, res, next) => {
+  const { id } = req.params;
+  const { isShow } = req.body;
+  try {
+    const images = await ProfileImages.findOne({
+      where: { id: id, userId: req.user.id },
+    });
+    const image = await ProfileImages.findOne({ where: { id: id } });
+
+    const check = images.some((item) => {
+      if (item.id !== id && item.isShow) return true;
+    });
+    console.log(check);
+
+    if (image.userId !== req.user.id) {
+      throw new AppError(
+        "error ! user only allow to update there own profileImages",
+        401
+      );
+    }
+
+    await profileImage.update({ isShow: isShow }, { where: { id: id } });
+
+    res.status(201).json({ message: "delete success" });
   } catch (err) {
     next(err);
   }

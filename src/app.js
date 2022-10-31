@@ -1,7 +1,7 @@
 //sync or create database tables
 //
-// const { sequelize } = require("./models");
-// sequelize.sync({ force: true });
+const { sequelize } = require("./models");
+sequelize.sync({ alter: true });
 
 //core imports
 require("dotenv").config(); // for security
@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //routes
 app.use("/auth", authRoute);
-app.use("/user", authenticate, userRoute);
+app.use("/user", userRoute);
 app.use("/date", authenticate, dateRoute);
 app.use("/order", authenticate, orderRoute);
 app.use("/chat", authenticate, chatRoute);
