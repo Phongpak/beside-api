@@ -386,7 +386,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
     });
 
     const finalAvailableProviders = await Promise.all(AvailableProviders);
-
+    console.log("finalAvailableProviders" + finalAvailableProviders);
     res.status(201).json({ finalAvailableProviders });
   } catch (err) {
     next(err);
