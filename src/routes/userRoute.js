@@ -16,11 +16,13 @@ router.patch(
 
 router.delete("/:id", userController.deleteProfileImage);
 
-router.get(
+router.post(
   "/provider/:lat/:lng/:radius",
   userController.getAllProviderByLatLng
 );
 
 router.get("/profileImages/:id", userController.getProfileImages);
+
+router.get("/:id", userController.getUserProfiles);
 
 module.exports = router;

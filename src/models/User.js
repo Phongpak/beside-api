@@ -128,11 +128,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     { underscored: true }
   );
   User.associate = (db) => {
     User.hasMany(db.Order, {
+      as: "customer",
       foreignKey: {
         name: "customerId",
         allowNull: false,
@@ -141,6 +146,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
     User.hasMany(db.Order, {
+      as: "provider",
       foreignKey: {
         name: "providerId",
         allowNull: false,
@@ -172,7 +178,6 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "RESTRICT",
     });
-
     User.hasMany(db.ProfileImages, {
       foreignKey: {
         name: "userId",

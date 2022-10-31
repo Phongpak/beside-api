@@ -1,8 +1,17 @@
 const cloudinary = require("../utils/cloudinary");
 const AppError = require("../utils/appError");
 const fs = require("fs");
-const { User, ProfileImages } = require("../models");
-const { Op } = require("sequelize");
+const {
+  User,
+  ProfileImages,
+  Order,
+  DateAvailable,
+  DateUnavailable,
+} = require("../models");
+const { Op, Sequelize } = require("sequelize");
+const Moment = require("moment");
+const MomentRange = require("moment-range");
+const moment = MomentRange.extendMoment(Moment);
 const {
   STATUS_NULL,
   STATUS_PENDING,
@@ -29,6 +38,7 @@ exports.updateUser = async (req, res, next) => {
       rate,
       lat,
       lng,
+      location,
     } = req.body;
     const { id } = req.params;
 
@@ -106,11 +116,15 @@ exports.updateUser = async (req, res, next) => {
           bankName,
           description,
           providerRequestStatus,
+          location,
         },
         { where: { id: id } }
       );
-
-      res.status(200).json({ message: "user update success" });
+      const user = await User.findOne({
+        where: { id: id },
+        attributes: { exclude: "password" },
+      });
+      res.status(200).json({ user: user, message: "user update success" });
     }
   } catch (err) {
     next(err);
@@ -151,29 +165,32 @@ exports.deleteProfileImage = async (req, res, next) => {
 };
 
 exports.getAllProviderByLatLng = async (req, res, next) => {
-  const { lat, lng, radius } = req.params;
-  function CoordDistance(lat, lng) {
-    RadiansLat = (lat * Math.PI) / 180;
-    RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
-    RadiansLng = (lng * Math.PI) / 180;
-    RadiansLng2 = ((+lng + 1) * Math.PI) / 180;
-
-    return (
-      6371 *
-      Math.acos(
-        Math.sin(RadiansLat) * Math.sin(RadiansLat2) +
-          Math.cos(RadiansLat) *
-            Math.cos(RadiansLat2) *
-            Math.cos(RadiansLng2 - RadiansLng)
-      )
-    );
-  }
-
-  const distance = CoordDistance(lat, lng);
-  const calculated = radius / distance;
-
   try {
-    const provider = await User.findAll({
+    const { lat, lng, radius } = req.params;
+    const { appointmentDate, fromTime, toTime } = req.body;
+    console.log(lat, lng, radius);
+    console.log(appointmentDate, fromTime, toTime);
+    function CoordDistance(lat, lng) {
+      RadiansLat = (lat * Math.PI) / 180;
+      RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
+      RadiansLng = (lng * Math.PI) / 180;
+      RadiansLng2 = ((+lng + 1) * Math.PI) / 180;
+
+      return (
+        6371 *
+        Math.acos(
+          Math.sin(RadiansLat) * Math.sin(RadiansLat2) +
+            Math.cos(RadiansLat) *
+              Math.cos(RadiansLat2) *
+              Math.cos(RadiansLng2 - RadiansLng)
+        )
+      );
+    }
+
+    const distance = CoordDistance(lat, lng);
+    const calculated = radius / distance;
+
+    const providers = await User.findAll({
       where: {
         [Op.and]: [
           {
@@ -190,12 +207,187 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
           },
           {
             isBan: false,
+            providerRequestStatus: STATUS_SUCCESS,
           },
         ],
       },
     });
 
-    res.status(201).json({ provider });
+    //------------------------------------Date Validates
+
+    const selectedWeekday = moment(
+      appointmentDate,
+      "YYYY-MM-DD hh:mm:ss"
+    ).day();
+    const selected = moment(appointmentDate, "YYYY-MM-DD hh:mm:ss");
+    const selectedDate = moment(appointmentDate, "YYYY-MM-DD hh:mm:ss").date();
+    const DateFromTime = moment(
+      appointmentDate + " " + fromTime,
+      "YYYY-MM-DD hh:mm:ss"
+    ).add(1, "seconds");
+
+    const DateToTime = moment(
+      appointmentDate + " " + toTime,
+      "YYYY-MM-DD hh:mm:ss"
+    ).subtract(1, "seconds");
+
+    const multiDateAva = providers.map((item) => {
+      return DateAvailable.findAll({
+        where: {
+          weekday: "" + selectedWeekday,
+          fromTime: { [Op.lte]: DateFromTime.format(`HH:mm:ss`) },
+          toTime: { [Op.gte]: DateToTime.format(`HH:mm:ss`) },
+          userId: item.dataValues.id,
+        },
+      });
+    });
+
+    const AvaOfUsers = await Promise.all(multiDateAva);
+    const multiDateUnava = AvaOfUsers.flat(1).map((item) => {
+      if (item.dataValues.userId) {
+        return DateUnavailable.findAll({
+          where: {
+            unavailableDate: selected,
+            [Op.or]: [
+              {
+                fromTime: {
+                  [Op.between]: [
+                    DateFromTime.format(`HH:mm:ss`),
+                    DateToTime.format(`HH:mm:ss`),
+                  ],
+                },
+              },
+              {
+                toTime: {
+                  [Op.between]: [
+                    DateFromTime.format(`HH:mm:ss`),
+                    DateToTime.format(`HH:mm:ss`),
+                  ],
+                },
+              },
+            ],
+            userId: item.dataValues.userId,
+          },
+        });
+      }
+    });
+
+    const unAvaOfUsers = await Promise.all(multiDateUnava);
+
+    const subtract = unAvaOfUsers.flat(1).map((item) => item.userId);
+    const RemainsOfUsersByUnava = AvaOfUsers.flat(1).reduce((sum, item) => {
+      if (subtract.includes(item.userId)) {
+        return sum;
+      } else {
+        sum.push(item.dataValues);
+        return sum;
+      }
+    }, []);
+
+    const multiDateOrder = RemainsOfUsersByUnava.map((item) => {
+      return Order.findAll({
+        where: {
+          [Op.or]: [
+            {
+              providerId: item.userId,
+              appointmentDate: selected,
+              status: STATUS_INPROGRESS,
+              [Op.or]: [
+                {
+                  fromTime: {
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
+                  },
+                },
+                {
+                  toTime: {
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              providerId: item.userId,
+              appointmentDate: selected,
+              status: STATUS_SUCCESS,
+              [Op.or]: [
+                {
+                  fromTime: {
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
+                  },
+                },
+                {
+                  toTime: {
+                    [Op.between]: [
+                      DateFromTime.format(`HH:mm:ss`),
+                      DateToTime.format(`HH:mm:ss`),
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+    });
+    const OrderOfUsers = await Promise.all(multiDateOrder);
+    const subtractOrder = OrderOfUsers.flat(1).map((item) => {
+      return item.dataValues.providerId;
+    });
+
+    const RemainsOfUsersByOrder = RemainsOfUsersByUnava.flat(1).reduce(
+      (sum, item) => {
+        if (subtractOrder.includes(item.userId)) {
+          return sum;
+        } else {
+          sum.push(item);
+          return sum;
+        }
+      },
+      []
+    );
+
+    const allUsers = RemainsOfUsersByOrder.map((item) => {
+      return item.userId;
+    });
+
+    const AvailableProviders = allUsers.map((item) => {
+      return User.findOne({
+        where: {
+          id: item,
+        },
+        attributes: { exclude: "password" },
+        include: [
+          {
+            model: Order,
+            as: "provider",
+            attributes: [
+              [
+                Sequelize.fn("COUNT", Sequelize.col("providerReviewRating")),
+                "total_rating",
+              ],
+              [
+                Sequelize.fn("AVG", Sequelize.col("providerReviewRating")),
+                "average_rating",
+              ],
+            ],
+            where: { providerId: item },
+          },
+        ],
+      });
+    });
+
+    const finalAvailableProviders = await Promise.all(AvailableProviders);
+    console.log("finalAvailableProviders" + finalAvailableProviders);
+    res.status(201).json({ finalAvailableProviders });
   } catch (err) {
     next(err);
   }
@@ -208,6 +400,29 @@ exports.getProfileImages = async (req, res, next) => {
       where: { userId: id },
     });
     res.status(201).json({ profileImages });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getUserProfiles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findAll({
+      where: { id },
+      attributes: { exclude: "password" },
+      include: [
+        {
+          model: ProfileImages,
+          attributes: ["id", "Image", "userId"],
+        },
+        {
+          model: Order,
+          as: "provider",
+        },
+      ],
+    });
+    res.status(201).json({ user });
   } catch (err) {
     next(err);
   }

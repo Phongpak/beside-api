@@ -5,6 +5,7 @@ const {
   DateAvailable,
   DateUnavailable,
   Transaction,
+  ProfileImages,
 } = require("../models");
 const { Op } = require("sequelize");
 const Moment = require("moment");
@@ -22,14 +23,29 @@ const {
 exports.createOrder = async (req, res, next) => {
   try {
     //------------------------------------Variables
-    const { appointmentDate, fromTime, toTime, providerId, description } =
-      req.body;
-    if (!appointmentDate || !fromTime || !toTime || !providerId) {
+    const {
+      appointmentDate,
+      fromTime,
+      toTime,
+      providerId,
+      description,
+      lat,
+      lng,
+      location,
+    } = req.body;
+    const customerId = req.user.id;
+    if (
+      !appointmentDate ||
+      !fromTime ||
+      !toTime ||
+      !providerId ||
+      !customerId
+    ) {
       throw new AppError(
         "rerquire appointmentDate ,fromTime ,toTime ,providerId"
       );
     }
-    const customerId = req.user.id;
+
     const provider = await User.findOne({ where: { id: providerId } });
 
     const selectedWeekday = moment(
@@ -79,7 +95,12 @@ exports.createOrder = async (req, res, next) => {
       where: { userId: providerId },
     });
     const selectedDateOrders = await Order.findAll({
-      where: { providerId, appointmentDate, status: STATUS_INPROGRESS },
+      where: {
+        [Op.or]: [
+          { providerId, appointmentDate, status: STATUS_INPROGRESS },
+          { providerId, appointmentDate, status: STATUS_SUCCESS },
+        ],
+      },
     });
 
     const dateAvaMap = dateAva.some((item) => {
@@ -173,6 +194,9 @@ exports.createOrder = async (req, res, next) => {
             rentPriceTotal,
             description,
             status: STATUS_PENDING,
+            lat,
+            lng,
+            location,
           });
           await Transaction.create({
             receiverId: providerId,
@@ -369,18 +393,39 @@ exports.updateOrder = async (req, res, next) => {
   }
 };
 
-exports.getOrderMyCustomers = async (req, res, next) => {
+exports.getOrdersById = async (req, res, next) => {
   try {
-    const orders = await Order.findAll({ where: { providerId: req.user.id } });
-    res.status(201).json({ orders });
-  } catch (err) {
-    next(err);
-  }
-};
+    const { id } = req.params;
+    const orders = await Order.findAll({
+      where: {
+        [Op.or]: [{ providerId: id }, { customerId: id }],
+      },
+      include: [
+        {
+          model: User,
+          as: "customer",
+          attributes: ["id", "firstName", "lastName", "penName"],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId"],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "provider",
+          attributes: ["id", "firstName", "lastName", "penName"],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId"],
+            },
+          ],
+        },
+      ],
+    });
 
-exports.getOrderMyProviders = async (req, res, next) => {
-  try {
-    const orders = await Order.findAll({ where: { customerId: req.user.id } });
     res.status(201).json({ orders });
   } catch (err) {
     next(err);

@@ -76,6 +76,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log("req.body", req.body);
 
     if (typeof email !== "string") {
       throw new AppError("email address  password is invalid", 400);
@@ -86,6 +87,12 @@ exports.login = async (req, res, next) => {
     });
     if (!user) {
       throw new AppError("email address or password is invalid", 400);
+    }
+    if (user.isBan) {
+      throw new AppError("banned", 401);
+    }
+    if (!user.isVerify) {
+      throw new AppError("not yet verified", 401);
     }
 
     const isCorrect = await bcrypt.compare(password, user.password);
