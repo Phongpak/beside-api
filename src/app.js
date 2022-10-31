@@ -1,7 +1,7 @@
 //sync or create database tables
 //
-const { sequelize } = require("./models");
-sequelize.sync({ alter: true });
+// const { sequelize } = require("./models");
+// sequelize.sync({ alter: true });
 
 //core imports
 require("dotenv").config(); // for security

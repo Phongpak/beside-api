@@ -431,15 +431,26 @@ exports.updateProfileImage = async (req, res, next) => {
   const { id } = req.params;
   const { isShow } = req.body;
   try {
-    const images = await ProfileImages.findOne({
-      where: { id: id, userId: req.user.id },
+    const images = await ProfileImages.findAll({
+      where: { userId: req.user.id },
     });
-    const image = await ProfileImages.findOne({ where: { id: id } });
-
+    const image = await ProfileImages.findOne({
+      where: { id: id },
+    });
     const check = images.some((item) => {
-      if (item.id !== id && item.isShow) return true;
+      if (item.dataValues.id !== +id && item.dataValues.isShow == true) {
+        return true;
+      } else {
+        return false;
+      }
     });
-    console.log(check);
+
+    if (check == true) {
+      throw new AppError(
+        "error ! user only allow to update there own profileImages isShow only 1 image",
+        401
+      );
+    }
 
     if (image.userId !== req.user.id) {
       throw new AppError(
@@ -448,9 +459,9 @@ exports.updateProfileImage = async (req, res, next) => {
       );
     }
 
-    await profileImage.update({ isShow: isShow }, { where: { id: id } });
+    await ProfileImages.update({ isShow: isShow }, { where: { id: id } });
 
-    res.status(201).json({ message: "delete success" });
+    res.status(201).json({ message: "update success" });
   } catch (err) {
     next(err);
   }

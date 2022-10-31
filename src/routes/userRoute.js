@@ -24,6 +24,12 @@ router.post(
 
 router.get("/profileImages/:id", authenticate, userController.getProfileImages);
 
+router.patch(
+  "/profileImages/:id",
+  authenticate,
+  userController.updateProfileImage
+);
+
 router.get("/:id", userController.getUserProfiles);
 
 module.exports = router;
