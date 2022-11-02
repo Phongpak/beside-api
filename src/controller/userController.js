@@ -209,7 +209,6 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
         ],
       },
     });
-
     //------------------------------------Date Validates
 
     const selectedWeekday = moment(
@@ -280,7 +279,6 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
         return sum;
       }
     }, []);
-
     const multiDateOrder = RemainsOfUsersByUnava.map((item) => {
       return Order.findAll({
         where: {
@@ -335,6 +333,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
         },
       });
     });
+
     const OrderOfUsers = await Promise.all(multiDateOrder);
     const subtractOrder = OrderOfUsers.flat(1).map((item) => {
       return item.dataValues.providerId;
@@ -355,8 +354,8 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
     const allUsers = RemainsOfUsersByOrder.map((item) => {
       return item.userId;
     });
-
-    const AvailableProviders = allUsers.map((item) => {
+    console.log("check point 1", allUsers);
+    const availableProviders = allUsers.map((item) => {
       return User.findOne({
         where: {
           id: item,
@@ -376,13 +375,14 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
                 "average_rating",
               ],
             ],
-            where: { providerId: item },
+            group: { providerId: item },
           },
         ],
       });
     });
-
-    const finalAvailableProviders = await Promise.all(AvailableProviders);
+    console.log("check point 2", availableProviders);
+    const finalAvailableProviders = await Promise.all(availableProviders);
+    console.log("check point 3", finalAvailableProviders);
 
     res.status(201).json({ finalAvailableProviders });
   } catch (err) {

@@ -1,10 +1,11 @@
 {
   "development": {
-    "username": "root",
-    "password": "",
+    "username": "doadmin",
+    "password": "AVNS_p_Hg7j2Rr5kE7c9JXdV",
     "database": "beside",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "db-mysql-555-do-user-12763924-0.b.db.ondigitalocean.com",
+    "dialect": "mysql",
+    "port": "25060"
   },
   "test": {
     "username": "root",

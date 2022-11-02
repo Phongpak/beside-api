@@ -27,7 +27,7 @@ const adminAuthenticate = require("./middlewares/adminAuthenticate");
 //cores
 const app = express();
 if (process.env.NODE_ENV === "development") {
-	app.use(morgan("dev")); //logs option dev or combined
+  app.use(morgan("dev")); //logs option dev or combined
 }
 app.use(cors());
 app.use(express.json());
