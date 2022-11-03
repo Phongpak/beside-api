@@ -7,6 +7,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: { notEmpty: true },
       },
+      isShow: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+        validate: { notEmpty: true },
+      },
     },
     { underscord: true }
   );

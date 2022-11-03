@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //routes
 app.use("/auth", authRoute);
-app.use("/user", authenticate, userRoute);
+app.use("/user", userRoute);
 app.use("/date", authenticate, dateRoute);
 app.use("/order", authenticate, orderRoute);
 app.use("/chat", authenticate, chatRoute);

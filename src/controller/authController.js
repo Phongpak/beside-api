@@ -76,6 +76,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log("req.body", req.body);
 
     if (typeof email !== "string") {
       throw new AppError("email address  password is invalid", 400);

@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Transaction.associate = (db) => {
     Transaction.belongsTo(db.User, {
+      as: "sender",
       foreignKey: {
         name: "senderId",
         allowNull: false,
@@ -40,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "RESTRICT",
     });
     Transaction.belongsTo(db.User, {
+      as: "receiver",
       foreignKey: {
         name: "receiverId",
         allowNull: false,

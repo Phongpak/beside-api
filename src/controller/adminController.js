@@ -9,7 +9,7 @@ exports.getUser = async (req, res, next) => {
       include: [
         {
           model: ProfileImages,
-          attributes: ["id", "Image", "userId"],
+          attributes: ["id", "Image", "userId", "isShow"],
         },
       ],
     });
@@ -23,6 +23,50 @@ exports.getTransaction = async (req, res, next) => {
   try {
     const transactions = await Transaction.findAll({
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "penName",
+            "email",
+            "bookBankImage",
+            "bookAccountNumber",
+            "bankName",
+            "mobile",
+          ],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId", "isShow"],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "receiver",
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "penName",
+            "email",
+            "bookBankImage",
+            "bookAccountNumber",
+            "bankName",
+            "mobile",
+          ],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId", "isShow"],
+            },
+          ],
+        },
+      ],
     });
     res.status(201).json({ transactions });
   } catch (err) {
@@ -34,6 +78,30 @@ exports.getOrder = async (req, res, next) => {
   try {
     const orders = await Order.findAll({
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: User,
+          as: "customer",
+          attributes: ["id", "firstName", "lastName", "penName", "email"],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId", "isShow"],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "provider",
+          attributes: ["id", "firstName", "lastName", "penName", "email"],
+          include: [
+            {
+              model: ProfileImages,
+              attributes: ["id", "Image", "userId", "isShow"],
+            },
+          ],
+        },
+      ],
     });
     res.status(201).json({ orders });
   } catch (err) {

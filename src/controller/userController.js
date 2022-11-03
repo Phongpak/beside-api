@@ -120,8 +120,11 @@ exports.updateUser = async (req, res, next) => {
         },
         { where: { id: id } }
       );
-
-      res.status(200).json({ message: "user update success" });
+      const user = await User.findOne({
+        where: { id: id },
+        attributes: { exclude: "password" },
+      });
+      res.status(200).json({ user: user, message: "user update success" });
     }
   } catch (err) {
     next(err);
@@ -165,8 +168,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
   try {
     const { lat, lng, radius } = req.params;
     const { appointmentDate, fromTime, toTime } = req.body;
-    console.log(lat, lng, radius);
-    console.log(appointmentDate, fromTime, toTime);
+
     function CoordDistance(lat, lng) {
       RadiansLat = (lat * Math.PI) / 180;
       RadiansLat2 = ((+lat + 1) * Math.PI) / 180;
@@ -354,7 +356,7 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
     const allUsers = RemainsOfUsersByOrder.map((item) => {
       return item.userId;
     });
-    console.log("check point 1", allUsers);
+
     const availableProviders = allUsers.map((item) => {
       return User.findOne({
         where: {
@@ -375,14 +377,18 @@ exports.getAllProviderByLatLng = async (req, res, next) => {
                 "average_rating",
               ],
             ],
-            group: { providerId: item },
+            where: { providerId: item },
+            required: false,
+          },
+          {
+            model: ProfileImages,
+            where: { isShow: true },
+            required: false,
           },
         ],
       });
     });
-    console.log("check point 2", availableProviders);
     const finalAvailableProviders = await Promise.all(availableProviders);
-    console.log("check point 3", finalAvailableProviders);
 
     res.status(201).json({ finalAvailableProviders });
   } catch (err) {
@@ -411,15 +417,80 @@ exports.getUserProfiles = async (req, res, next) => {
       include: [
         {
           model: ProfileImages,
-          attributes: ["id", "Image", "userId"],
+          attributes: ["id", "Image", "userId", "isShow"],
         },
         {
           model: Order,
           as: "provider",
+          attributes: [
+            "appointmentDate",
+            "fromTime",
+            "toTime",
+            "rentPriceTotal",
+            "providerReviewDescription",
+            "customerReviewDescription",
+            "providerReviewRating",
+            "customerReviewRating",
+            "description",
+            "lat",
+            "lng",
+            "location",
+            "status",
+            [
+              Sequelize.fn("COUNT", Sequelize.col("providerReviewRating")),
+              "total_rating",
+            ],
+            [
+              Sequelize.fn("AVG", Sequelize.col("providerReviewRating")),
+              "average_rating",
+            ],
+          ],
+          where: { providerId: id },
+          required: false,
         },
       ],
     });
     res.status(201).json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateProfileImage = async (req, res, next) => {
+  const { id } = req.params;
+  const { isShow } = req.body;
+  try {
+    const images = await ProfileImages.findAll({
+      where: { userId: req.user.id },
+    });
+    const image = await ProfileImages.findOne({
+      where: { id: id },
+    });
+    const check = images.some((item) => {
+      if (item.dataValues.id !== +id && item.dataValues.isShow == true) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    if (check == true) {
+      throw new AppError(
+        "error ! user only allow to update there own profileImages isShow only 1 image",
+        401
+      );
+    }
+
+    if (image.userId !== req.user.id) {
+      throw new AppError(
+        "error ! user only allow to update there own profileImages",
+        401
+      );
+    }
+
+    await ProfileImages.update({ isShow: isShow }, { where: { id: id } });
+
+    res.status(201).json({ message: "update success" });
   } catch (err) {
     next(err);
   }
